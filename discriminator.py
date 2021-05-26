@@ -5,7 +5,9 @@ from torch.autograd import grad as torch_grad
 
 def nn_blocks(in_feats, out_feats, *args, **kwargs):
     return nn.Sequential(nn.Linear(in_feats, out_feats),
-                        nn.ReLU()
+            nn.BatchNorm1d(out_feats),
+                        nn.ReLU(),
+                        nn.Dropout()
                         )
 
 
@@ -60,6 +62,7 @@ def _gradient_penalty(self, z_cell, z_drug):
 
         # Gradients have shape (batch_size, hidden_dim),
         # so flatten to easily take norm per example in batch
+        ##TODO: Probably do not need that. Check sizes. 
         gradients = gradients.view(batch_size, -1)
       #  self.losses['gradient_norm'].append(gradients.norm(2, dim=1).mean().data[0])
 
